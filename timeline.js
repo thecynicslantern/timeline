@@ -48,11 +48,13 @@ const Timeline = require("timeline.js");
 - seek to a position, triggering events between
 
     timeline.seek(n)
+
     - eg: window.onscroll = () => timeline.seek(window.scrollY);
 
 - read the timeline's internal time position
 
     timeline.position
+	
     - read only
 
 - set position without triggering any frames
