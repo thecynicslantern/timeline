@@ -69,12 +69,12 @@ const Timeline = require("timeline.js");
 - tweens are applied in added order regardless of seek direction
 
 
-*/ "use strict"; 
+*/ "use strict";
 
 const sortFnInc = (a, b) => a === b ? 0 : (a < b ? 1 : -1);
 const sortFnDec = (a, b) => a === b ? 0 : (a > b ? 1 : -1);
 const callFunc = pair => pair[0]();
-const callUndo = pair => pair[1] && (pair[1] === true) ? pair[0] : pair[1]();
+const callUndo = pair => pair[1] && (pair[1] === true) ? pair[0]() : pair[1]();
 
 function Timeline() {
 	if (!this) return new Timeline();
@@ -87,8 +87,9 @@ function Timeline() {
 		if (to == from) return;
 		tweens.forEach(entry => {
 			const [startTime, endTime, apply, fromValue, toValue, easer] = entry;
-			if (from > startTime && to > endTime) return;
-			if (from < startTime && to < endTime) return;
+
+			if (to > from && Math.max(startTime, from) > Math.min(endTime, to)) return;
+			if (to < from && Math.max(startTime, to) > Math.min(endTime, from)) return;
 
 			let progress;
 			if (to <= startTime) {
@@ -121,13 +122,13 @@ function Timeline() {
 			.filter(filterFn)
 			.sort(reversed ? sortFnDec : sortFnInc);
 		const eachCb = reversed ? callUndo : callFunc;
+		applyTweens(n);
 		timestamps.forEach(k => {
 			position = Number(k);
 			let funcs = frames[k];
 			if (reversed) funcs = funcs.reverse();
 			funcs.forEach(eachCb);
 		});
-		applyTweens(n);
 		position = n;
 		seeking = false;
 	};
@@ -145,6 +146,7 @@ function Timeline() {
 		seek,
 		tween: (startTime, duration, func, from = 0, to = 1, easer = null) => {
 			tweens.push([startTime, startTime + duration, func, from, to, easer]);
+			if (startTime <= position && startTime + duration > position) applyTweens(position);
 		},
 		position: {
 			get: () => position,
