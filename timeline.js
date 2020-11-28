@@ -25,7 +25,7 @@ const Timeline = require("timeline.js");
 
     timeline.at(time, func, undo = null)
 
-    - undo (if a function) will be called when the specified time is reached while seeking backwards
+    - undo (if a function) will be called when the specified time is passed while seeking backwards
     - if undo is `true`, func will be called in this case
     - if undo is `null` (default), this event will be ignored while seeking backwards
     - eg: timeline.at(5000, () => myDiv.classList.add("visible"), () => myDiv.classList.remove("visible"));
@@ -115,7 +115,7 @@ function Timeline() {
 		seeking = true;
 		const reversed = n < position;
 		const filterFn = reversed
-			? k => (k < position) && (k >= n)
+			? k => (k <= position) && (k > n)
 			: k => (k >= position) && (k < n);
 		const timestamps = Object.keys(frames)
 			.map(n => Number(n))
@@ -137,6 +137,7 @@ function Timeline() {
 		at: (time, func, undo = null) => {
 			if (frames[time] === undefined) frames[time] = [];
 			frames[time].push([func, undo]);
+			if (position == time) func();
 		},
 		jump: n => {
 			if (seeking) throw new Error("timeline.jump() unavailable during frame callback");
