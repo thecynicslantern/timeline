@@ -74,7 +74,7 @@ const Timeline = require("timeline.js");
 const sortFnInc = (a, b) => a === b ? 0 : (a < b ? 1 : -1);
 const sortFnDec = (a, b) => a === b ? 0 : (a > b ? 1 : -1);
 const callFunc = pair => pair[0]();
-const callUndo = pair => pair[1] && (pair[1] === true) ? pair[0]() : pair[1]();
+const callUndo = pair => pair[1] && ((pair[1] === true) ? pair[0]() : pair[1]());
 
 function Timeline() {
 	if (!this) return new Timeline();
@@ -113,24 +113,27 @@ function Timeline() {
 		if (seeking) throw new Error("timeline.seek() unavailable during frame callback");
 		if (n == position) return;
 		seeking = true;
-		const reversed = n < position;
-		const filterFn = reversed
-			? k => (k <= position) && (k > n)
-			: k => (k >= position) && (k < n);
-		const timestamps = Object.keys(frames)
-			.map(n => Number(n))
-			.filter(filterFn)
-			.sort(reversed ? sortFnDec : sortFnInc);
-		const eachCb = reversed ? callUndo : callFunc;
-		applyTweens(n);
-		timestamps.forEach(k => {
-			position = Number(k);
-			let funcs = frames[k];
-			if (reversed) funcs = funcs.reverse();
-			funcs.forEach(eachCb);
-		});
-		position = n;
-		seeking = false;
+		try {
+			const reversed = n < position;
+			const filterFn = reversed
+				? k => (k <= position) && (k > n)
+				: k => (k >= position) && (k < n);
+			const timestamps = Object.keys(frames)
+				.map(n => Number(n))
+				.filter(filterFn)
+				.sort(reversed ? sortFnDec : sortFnInc);
+			const eachCb = reversed ? callUndo : callFunc;
+			applyTweens(n);
+			timestamps.forEach(k => {
+				position = Number(k);
+				let funcs = frames[k];
+				if (reversed) funcs = funcs.reverse();
+				funcs.forEach(eachCb);
+			});
+			position = n;
+		} finally {
+			seeking = false;
+		}
 	};
 
 	const api = {
@@ -146,8 +149,9 @@ function Timeline() {
 		tick: (n = 1) => seek(position + n),
 		seek,
 		tween: (startTime, duration, func, from = 0, to = 1, easer = null) => {
-			tweens.push([startTime, startTime + duration, func, from, to, easer]);
-			if (startTime <= position && startTime + duration > position) applyTweens(position);
+			const endTime = startTime + duration;
+			tweens.push([startTime, endTime, func, from, to, easer]);
+			if (startTime <= position && endTime > position) applyTweens(position);
 		},
 		position: {
 			get: () => position,
