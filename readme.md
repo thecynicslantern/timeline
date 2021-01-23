@@ -1,3 +1,5 @@
+[demo](https://www.thecynicslantern.net/timeline)
+
 # quick guide
 
 ```js
@@ -7,7 +9,7 @@ const Timeline = require("timeline.js");
 ## immediately start a simple animation:
 
 ```js
-Timeline.tween(duration, func, from = 0, to = 1, easer = null, fps = 60)`
+Timeline.tween(duration, func, from = 0, to = 1, easer = null, fps = 60)
 ```
 
 * per frame, func will be passed a value between from and to according to progression
