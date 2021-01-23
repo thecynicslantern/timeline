@@ -19,13 +19,13 @@ Timeline.tween(duration, func, from = 0, to = 1, easer = null, fps = 60)`
 ## create a timeline
 
 ```js
-let timeline = Timeline(autoplay = false)`
+let timeline = Timeline(autoplay = false)
 ```
 
 or
 
 ```js
-timeline = new Timeline(autoplay = false)`
+timeline = new Timeline(autoplay = false)
 ```
 
 * autoplay option uses play(), below
@@ -33,7 +33,7 @@ timeline = new Timeline(autoplay = false)`
 ## add an action to occur at a specific time
 
 ```js
-timeline.at(time, func, undo = null)`
+timeline.at(time, func, undo = null)
 ```
 
 * undo (if a function) will be called when the specified time is passed while seeking backwards
@@ -48,7 +48,7 @@ timeline.at(5000, () => myDiv.classList.add("visible"), () => myDiv.classList.re
 ## apply a function per frame within a time range
 
 ```js
-timeline.tween(startTime, duration, func, from = 0, to = 1, easer = null)`
+timeline.tween(startTime, duration, func, from = 0, to = 1, easer = null)
 ```
 
 * func will be passed values between from and to according to progression
@@ -62,7 +62,7 @@ timeline.tween(5000, 1000, v => myDiv.style.opacity = v);
 ## seek forward n time, triggering events between
 
 ```js
-timeline.tick(n = 1)`
+timeline.tick(n = 1)
 ```
 
 * n may be negative
@@ -75,7 +75,7 @@ setInterval(() => timeline.tick(16), 16);
 ## seek to a position, triggering events between
 
 ```js
-timeline.seek(n)`
+timeline.seek(n)
 ```
 
 * eg:
@@ -87,7 +87,7 @@ window.onscroll = () => timeline.seek(window.scrollY);
 ## add an action to occur at a relative time
 
 ```js
-timeline.in(timeDelta, func, undo = null)`
+timeline.in(timeDelta, func, undo = null)
 ```
 
 * equivalent to `timeline.at(timeline.position + timeDelta, func, undo)`
@@ -96,7 +96,7 @@ timeline.in(timeDelta, func, undo = null)`
 ## make it go
 
 ```js
-timeline.play(fps = 60)`
+timeline.play(fps = 60)
 ```
 
 * sets an interval to tick the timeline in real time
@@ -105,7 +105,7 @@ timeline.play(fps = 60)`
 ## make it repeat
 
 ```js
-timeline.loopAt(n, rewind = true) [ experimental and incomplete ]`
+timeline.loopAt(n, rewind = true) [ experimental and incomplete ]
 ```
 
 * position will wrap back to 0 when it reaches n
@@ -114,7 +114,7 @@ timeline.loopAt(n, rewind = true) [ experimental and incomplete ]`
 ## change speed
 
 ```js
-timeline.timescale`
+timeline.timescale
 ```
 
 * affects timelines that run via timeline.play()
@@ -122,13 +122,13 @@ timeline.timescale`
 * eg:
 
 ```js
-`tl.timescale = .25; // run at quarter speed`
+tl.timescale = .25; // run at quarter speed
 ```
 
 ## read the timeline's internal time position
 
 ```js
-timeline.position`
+timeline.position
 ```
 
 * read only
@@ -136,7 +136,7 @@ timeline.position`
 ## set raw position without triggering any events or tweens
 
 ```js
-timeline.jump(time)`
+timeline.jump(time)
 ```
 
 
