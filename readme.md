@@ -39,7 +39,11 @@ timeline.at(time, func, undo = null)`
 * undo (if a function) will be called when the specified time is passed while seeking backwards
 * if undo is `true`, func will be called in this case
 * if undo is `null` (default), this event will be ignored while seeking backwards
-* eg: timeline.at(5000, () => myDiv.classList.add("visible"), () => myDiv.classList.remove("visible"));
+* eg:
+
+```js
+timeline.at(5000, () => myDiv.classList.add("visible"), () => myDiv.classList.remove("visible"));
+```
 
 ## apply a function per frame within a time range
 
@@ -49,7 +53,11 @@ timeline.tween(startTime, duration, func, from = 0, to = 1, easer = null)`
 
 * func will be passed values between from and to according to progression
 * duration is any unit as consistent with seek() and tick()
-* eg: timeline.tween(5000, 1000, v => myDiv.style.opacity = v);
+* eg: 
+
+```js
+timeline.tween(5000, 1000, v => myDiv.style.opacity = v);
+```
 
 ## seek forward n time, triggering events between
 
@@ -58,7 +66,11 @@ timeline.tick(n = 1)`
 ```
 
 * n may be negative
-* eg: setInterval(() => timeline.tick(16), 16);
+* eg: 
+
+```js
+setInterval(() => timeline.tick(16), 16);
+```
 
 ## seek to a position, triggering events between
 
@@ -66,7 +78,11 @@ timeline.tick(n = 1)`
 timeline.seek(n)`
 ```
 
-* eg: window.onscroll = () => timeline.seek(window.scrollY);
+* eg:
+
+```js
+window.onscroll = () => timeline.seek(window.scrollY);
+```
 
 ## add an action to occur at a relative time
 
@@ -103,7 +119,11 @@ timeline.timescale`
 
 * affects timelines that run via timeline.play()
 * does not affect tick() or seek()
-* eg: `tl.timescale = .25; // run at quarter speed`
+* eg:
+
+```js
+`tl.timescale = .25; // run at quarter speed`
+```
 
 ## read the timeline's internal time position
 
