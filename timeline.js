@@ -32,7 +32,7 @@ function Timeline(autoplay = false) {
 	let purgeTweens = false;
 	let purgeEvents = false;
 
-	const setDeferredPurge = () => {
+	function setDeferredPurge(){
 		if (purgeTimer === null) {
 			purgeTimer = setTimeout(() => {
 				purgeTimer = null;
@@ -45,7 +45,7 @@ function Timeline(autoplay = false) {
 		}
 	};
 
-	const sort = reverse => {
+	function sort(reverse){
 		// we don't want to sort every frame so keep track of how each list is currently sorted
 		const sortOrder = reverse ? CURRENT_ORDER_BACKWARD : CURRENT_ORDER_FORWARD;
 		if (currentTweenOrder !== sortOrder) {
@@ -61,7 +61,7 @@ function Timeline(autoplay = false) {
 		}
 	};
 
-	const applyTweens = to => {
+	function applyTweens(to){
 		const from = position;
 		tweens.forEach(entry => {
 			let [startTime, endTime, apply, fromValue, toValue, easer] = entry;
@@ -93,7 +93,7 @@ function Timeline(autoplay = false) {
 	};
 
 	let seeking = false; // disallow seek() during seek()
-	const seek = n => {
+	function seek(n){
 		if (seeking) throw new Error("timeline.seek() unavailable during event callback");
 		if (n == position) return;
 		if (oneWay && n < position) throw new Error("wrong way down a one-way timeline"); // yir faither wid be proud
@@ -140,16 +140,29 @@ function Timeline(autoplay = false) {
 	};
 
 	// creates the interface returned by tl.tween() and tl.at()
-	const createThenApi = startOffset => ({
-		thenTween: (delay, duration, tweenFunc = null, from = 0, to = 1, easer = null) => {
-			return tween(startOffset + delay, duration, tweenFunc, from, to, easer);
-		},
-		thenIn: (delay, func, undo = null) => {
-			at(startOffset + delay, func, undo);
+	function createThenApi(startOffset){
+		return {
+			thenTween: (delay, duration, tweenFunc = null, from = 0, to = 1, easer = null) => {
+				return tween(startOffset + delay, duration, tweenFunc, from, to, easer);
+			},
+			thenIn: (delay, func, undo = null) => {
+				at(startOffset + delay, func, undo);
+			}
 		}
-	});
+	};
+    
+    function getLastFramePosition(){
+        let pos = 0;
+        tweens.forEach(tween => {
+            if(tween[1] > pos) pos = tween[1]; // [1] being endTime
+        });
+		// 'max' that against event times
+		pos = Math.max(...[pos, ...Object.keys(events)]);
+        return pos;
+    };
 
-	const tween = (startTime, duration, func, from = 0, to = 1, easer = null) => {
+
+	function tween(startTime, duration, func, from = 0, to = 1, easer = null){
 		if (!(typeof func == "function")) throw new Error("expected function, got " + typeof func);
 		const endTime = startTime + duration;
 		tweens.push([startTime, endTime, func, from, to, easer]);
@@ -159,7 +172,7 @@ function Timeline(autoplay = false) {
 		return createThenApi(startTime + duration);
 	};
 
-	const at = (time, func, undo = null) => {
+	function at(time, func, undo = null){
 		if (events[time] === undefined) events[time] = [];
 		events[time].push([func, undo]);
 		if (position == time) func();
@@ -174,18 +187,18 @@ function Timeline(autoplay = false) {
 	const api = {
 		at,
 		in: (timeDelta, func, undo = null) => at(timeDelta + position, func, undo),
-		jump: n => {
+		jump(n){
 			if (seeking) throw new Error("timeline.jump() unavailable during event callback");
 			position = n;
 		},
-		tick: (n = 1) => seek(position + n),
+		tick(n = 1){ seek(position + n) },
 		seek,
 		tween,
-		loopAt: (time, rewind = true) => {
+		loopAt(time, rewind = true){
 			loopRewind = rewind;
 			loopAt = time;
 		},
-		play: (fps = 60) => {
+		play(fps = 60){
 			if (playInterval !== null) clearInterval(playInterval);
 			lastPlayTime = (new Date).getTime();
 			playInterval = setInterval(() => {
@@ -194,11 +207,11 @@ function Timeline(autoplay = false) {
 				lastPlayTime = t;
 			}, Math.round(1000 / fps));
 		},
-		pause: () => {
+		pause(){
 			if (playInterval !== null) clearInterval(playInterval);
 			playInterval = null;
 		},
-		// set to avoid wasting memory on redundant historic events
+		// set to avoid wasting memory on redundant historic events (for long-running, hot-modified timelines)
 		oneWay: {
 			get: () => oneWay,
 			set: v => {
@@ -219,6 +232,10 @@ function Timeline(autoplay = false) {
 			get: () => position,
 			enumerable: true
 		},
+		end: {
+			get: () => getLastFramePosition(),
+			enumerable: true
+		}
 	};
 	const propertyDefs = {};
 	Object.keys(api).forEach(k => {

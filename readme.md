@@ -12,11 +12,15 @@ const Timeline = require("timeline.js");
 Timeline.tween(duration, func, from = 0, to = 1, easer = null, fps = 60)
 ```
 
-* per frame, func will be passed a value between from and to according to progression
-* easer, optional, is a function of (progression) => number, passed a number between 0 and 1
-* duration is in milliseconds
+* per frame, *func* will be passed a value between *from* and *to* according to progression
+* *easer*, optional, is a function of (progression) => number, passed a number between 0 and 1
+* *duration* is in milliseconds
 * returns a Promise, resolved when the tween ends
-* eg: Timeline.tween(2000, v => myDiv.style.opacity = v).then(() => body.removeChild(myDiv));
+* eg:
+
+```js
+Timeline.tween(2000, v => myDiv.style.opacity = v, 1, 0).then(() => body.removeChild(myDiv));
+```
 
 ## create a timeline
 
@@ -30,7 +34,7 @@ or
 timeline = new Timeline(autoplay = false)
 ```
 
-* autoplay option uses play(), below
+* autoplay option internally uses play(), below
 
 ## add an action to occur at a specific time
 
@@ -38,9 +42,9 @@ timeline = new Timeline(autoplay = false)
 timeline.at(time, func, undo = null)
 ```
 
-* undo (if a function) will be called when the specified time is passed while seeking backwards
-* if undo is `true`, func will be called in this case
-* if undo is `null` (default), this event will be ignored while seeking backwards
+* *undo* (if a function) will be called when the specified time is passed while seeking backwards
+* if *undo* is `true`, func will be called in this case
+* if *undo* is `null` (default), this event will be ignored while seeking backwards
 * eg:
 
 ```js
@@ -53,8 +57,8 @@ timeline.at(5000, () => myDiv.classList.add("visible"), () => myDiv.classList.re
 timeline.tween(startTime, duration, func, from = 0, to = 1, easer = null)
 ```
 
-* func will be passed values between from and to according to progression
-* duration is any unit as consistent with seek() and tick()
+* *func* will be passed values between *from* and *to* according to progression
+* *duration* is any unit as consistent with seek() and tick()
 * eg: 
 
 ```js
@@ -67,7 +71,7 @@ timeline.tween(5000, 1000, v => myDiv.style.opacity = v);
 timeline.tick(n = 1)
 ```
 
-* n may be negative
+* *n* may be negative
 * eg: 
 
 ```js
@@ -102,7 +106,7 @@ timeline.play(fps = 60)
 ```
 
 * sets an interval to tick the timeline in real time
-* fps is subject to background tab limitations as applied by browsers
+* *fps* is subject to background tab limitations as applied by browsers
 
 ## make it repeat
 
@@ -110,8 +114,8 @@ timeline.play(fps = 60)
 timeline.loopAt(n, rewind = true) [ experimental and incomplete ]
 ```
 
-* position will wrap back to 0 when it reaches n
-* if rewind is true, events and tweens will be applied in the reversal
+* position will wrap back to 0 when it reaches *n*
+* if *rewind* is true, events and tweens will be applied in the reversal
  
 ## change speed
 
@@ -135,6 +139,19 @@ timeline.position
 
 * read only
 
+## find the final activity time
+
+```js
+timeline.end
+```
+
+* returns the time after which no activity exists
+* eg:
+
+```js
+timeline.at(timeline.end, () => timeline.pause());
+```
+
 ## set raw position without triggering any events or tweens
 
 ```js
@@ -146,4 +163,3 @@ timeline.jump(time)
 
 * event callbacks are called in expected order, reversed when seeking backwards
 * undocumented functionality may change
-
