@@ -115,7 +115,7 @@ function Timeline(autoplay = false) {
 			const from = position;
 			const reversing = n < position;
 			const filterFn = reversing
-				? k => (k < position) && (k >= n)
+				? k => (k <= position) && (k > n)
 				: k => (k > position) && (k <= n);
 			const timestamps = sortedEvents.filter(filterFn);
 			timestamps.forEach(k => {
@@ -143,7 +143,7 @@ function Timeline(autoplay = false) {
 	function createThenApi(startOffset){
 		return {
 			thenTween: (delay, duration, tweenFunc = null, from = 0, to = 1, easer = null) => {
-				return tween(startOffset + delay, duration, tweenFunc, from, to, easer);
+				return tween(startOffset + delay, duration, tweenFunc, from, to, easer);;
 			},
 			thenIn: (delay, func, undo = null) => {
 				at(startOffset + delay, func, undo);
