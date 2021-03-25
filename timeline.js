@@ -94,6 +94,7 @@ function Timeline(autoplay = false) {
 
 	let seeking = false; // disallow seek() during seek()
 	function seek(n){
+		n = Number(n);
 		if (seeking) throw new Error("timeline.seek() unavailable during event callback");
 		if (n == position) return;
 		if (oneWay && n < position) throw new Error("wrong way down a one-way timeline"); // yir faither wid be proud
