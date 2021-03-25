@@ -192,7 +192,7 @@ function Timeline(autoplay = false) {
 			if (seeking) throw new Error("timeline.jump() unavailable during event callback");
 			position = n;
 		},
-		tick(n = 1){ seek(position + n) },
+		tick(n = 1){ seek(position + Number(n)) },
 		seek,
 		tween,
 		loopAt(time, rewind = true){
