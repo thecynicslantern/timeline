@@ -152,15 +152,15 @@ function Timeline(autoplay = false) {
 		}
 	};
     
-    function getLastFramePosition(){
-        let pos = 0;
-        tweens.forEach(tween => {
-            if(tween[1] > pos) pos = tween[1]; // [1] being endTime
-        });
+	function getLastFramePosition(){
+		let pos = 0;
+		tweens.forEach(tween => {
+			if(tween[1] > pos) pos = tween[1]; // [1] being endTime
+		});
 		// 'max' that against event times
 		pos = Math.max(...[pos, ...Object.keys(events)]);
-        return pos;
-    };
+		return pos;
+	};
 
 
 	function tween(startTime, duration, func, from = 0, to = 1, easer = null){
